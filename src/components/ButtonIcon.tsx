@@ -9,7 +9,7 @@ interface ButtonIconProps extends TouchableOpacityProps {
 export function ButtonIcon({ icon: Icon, ...rest }: ButtonIconProps) {
   const { colors, sizes } = useTheme()
   return (
-    <TouchableOpacity>
+    <TouchableOpacity {...rest}>
       <Icon color={colors.gray[300]} size={sizes[6]} />
     </TouchableOpacity>
   )

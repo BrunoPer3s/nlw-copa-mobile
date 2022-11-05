@@ -13,7 +13,7 @@ export function SignIn() {
       <Button
         onPress={signIn}
         title='Entrar com o google'
-        type='secondary'
+        type='SECONDARY'
         leftIcon={<Icon as={Fontisto}
           name="google"
           color="white"
