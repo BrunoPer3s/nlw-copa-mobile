@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Box, FlatList, useToast } from 'native-base';
+import { FlatList, useToast } from 'native-base';
 
 import { api } from '../services/api';
 
 import { GameProps, Game } from './Game';
+import { Loading } from './Loading';
 
 interface Props {
   poolId: string;
@@ -39,9 +40,47 @@ export function Guesses({ poolId }: Props) {
     }
   }
 
+  async function handleGuessConfirm(gameId: string) {
+    try {
+      if (!firstTeamPoints.trim() || !secondTeamPoints.trim()) {
+        return toast.show({
+          title: 'Informe o placar do palpite',
+          placement: 'top',
+          bgColor: 'red.500'
+        })
+      }
+
+      await api.post(`/pools/${poolId}/games/${gameId}/guesses`, {
+        firstTeamPoints: Number(firstTeamPoints),
+        secondTeamPoints: Number(secondTeamPoints),
+      })
+
+      toast.show({
+        title: 'Palpite enviado com sucesso!',
+        placement: 'top',
+        bgColor: 'green.500'
+      })
+
+      fetchGames()
+
+    } catch (err) {
+      console.log(err)
+
+      toast.show({
+        title: 'Não foi possível enviar o palpite.',
+        placement: 'top',
+        bgColor: 'red.500'
+      })
+    }
+  }
+
   useEffect(() => {
     fetchGames()
   }, [poolId])
+
+  if (isLoading) {
+    return <Loading />
+  }
   return (
     <FlatList
       data={games}
@@ -51,7 +90,7 @@ export function Guesses({ poolId }: Props) {
           data={item}
           setFirstTeamPoints={setFirstTeamPoints}
           setSecondTeamPoints={setSecondTeamPoints}
-          onGuessConfirm={() => { }}
+          onGuessConfirm={() => handleGuessConfirm(item.id)}
         />
       )}
     />
